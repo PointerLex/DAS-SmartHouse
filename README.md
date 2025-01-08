@@ -1,66 +1,154 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Smart Home Dashboard - Sistema de adquisición y distrubición de datos
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Smart Home Dashboard es un proyecto desarrollado en Laravel para gestionar datos de sensores en tiempo real, enviar alertas y registrar datos en una base de datos.
 
-## About Laravel
+## Requisitos previos
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Antes de clonar y ejecutar este proyecto, asegúrate de que tienes instalados los siguientes programas:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **PHP 8.2 o superior**
+- **Composer**
+- **Node.js y npm**
+- **Git**
+- **Servidor de base de datos MySQL**
+- **Laravel CLI**
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Clonar el repositorio
 
-## Learning Laravel
+```bash
+# Clonar el repositorio desde GitHub
+git clone https://github.com/PointerLex/DAS-SmartHouse.git
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+# Navegar al directorio del proyecto
+cd DAS-SmartHouse
+```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## Configuración inicial
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 1. Instalar dependencias de PHP
 
-## Laravel Sponsors
+Ejecuta el siguiente comando para instalar las dependencias del proyecto:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```bash
+composer install
+```
 
-### Premium Partners
+### 2. Instalar dependencias de JavaScript
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+Ejecuta el siguiente comando para instalar las dependencias del frontend:
 
-## Contributing
+```bash
+npm install
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 3. Configurar el archivo `.env`
 
-## Code of Conduct
+Copia el archivo de entorno de ejemplo y configura tus variables:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+cp .env.example .env
+```
 
-## Security Vulnerabilities
+Edita el archivo `.env` y actualiza las siguientes variables según tu configuración:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```env
+APP_NAME=SmartHome
+APP_URL=http://localhost
 
-## License
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=smarthome
+DB_USERNAME=
+DB_PASSWORD=
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+BROADCAST_DRIVER=pusher
+PUSHER_APP_ID=your-app-id
+PUSHER_APP_KEY=your-app-key
+PUSHER_APP_SECRET=your-app-secret
+PUSHER_APP_CLUSTER=your-app-cluster
+
+MAIL_MAILER=smtp
+MAIL_HOST=sandbox.smtp.mailtrap.io
+MAIL_PORT=2525
+MAIL_USERNAME=your-username
+MAIL_PASSWORD=your-password
+MAIL_FROM_ADDRESS=no-reply@smarthouse.com
+MAIL_FROM_NAME="Smart House"
+```
+
+### 4. Generar la clave de la aplicación
+
+```bash
+php artisan key:generate
+```
+
+### 5. Configurar la base de datos
+
+Asegúrate de que el servidor MySQL esté ejecutándose. Luego, ejecuta las migraciones para crear las tablas necesarias:
+
+```bash
+php artisan migrate
+```
+
+### 6. Compilar los assets
+
+Compila los assets del frontend utilizando Vite:
+
+```bash
+npm run build
+```
+
+## Ejecución del proyecto
+
+### Iniciar el servidor local
+
+Ejecuta el servidor de desarrollo de Laravel:
+
+```bash
+php artisan serve
+```
+
+Esto ejecutará la aplicación en `http://localhost:8000`.
+
+### Ejecutar el servidor de colas
+
+Para manejar las notificaciones y eventos, ejecuta el siguiente comando en una nueva terminal:
+
+```bash
+php artisan queue:work
+```
+
+## Probar la funcionalidad del correo
+
+Para probar el envío de correos electrónicos, asegúrate de haber configurado Mailtrap correctamente en el archivo `.env`.
+
+## Funcionalidades principales
+
+- Monitoreo en tiempo real de datos de sensores con Laravel Echo y Pusher.
+- Registro de datos históricos de sensores en la base de datos.
+- Envío de correos electrónicos de alerta cuando se desconecta un sensor.
+- Alerta visual mediante SweetAlert2 en el frontend.
+
+## Contribuciones
+
+Si deseas contribuir al proyecto, por favor sigue los siguientes pasos:
+
+1. Realiza un fork del repositorio.
+2. Crea una nueva rama:
+   ```bash
+   git checkout -b feature/nueva-funcionalidad
+   ```
+3. Realiza tus cambios y haz commit:
+   ```bash
+   git commit -m "Agregar nueva funcionalidad"
+   ```
+4. Sube los cambios a tu rama:
+   ```bash
+   git push origin feature/nueva-funcionalidad
+   ```
+5. Crea un pull request.
+
+## Licencia
+
+Este proyecto está licenciado bajo la [MIT License](LICENSE).
