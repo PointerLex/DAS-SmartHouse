@@ -130,19 +130,26 @@
     </script>
 
     <script>
-        window.Echo.channel('sensor-readings')
-            .listen('SensorDisconnected', (event) => {
-                const sensors = event.disconnected_sensors;
+        const eventSource = new EventSource('/stream-disconnections');
+
+        eventSource.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+            const sensors = data.disconnected_sensors;
+
+            if (sensors && sensors.length > 0) {
                 let sensorList = sensors.map(sensor =>
                     `<li>${sensor.sensor_type} (última conexión: ${sensor.last_seen})</li>`).join('');
+
                 Swal.fire({
                     icon: 'error',
                     title: '¡Sensores desconectados!',
                     html: `<p>Se detectaron los siguientes sensores desconectados:</p><ul>${sensorList}</ul>`,
                     confirmButtonText: 'Entendido'
                 });
-            });
+            }
+        };
     </script>
+
 
 
 

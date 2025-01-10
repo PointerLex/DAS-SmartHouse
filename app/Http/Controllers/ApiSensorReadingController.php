@@ -58,6 +58,21 @@ class ApiSensorReadingController extends Controller
         event(new SensorDisconnected($disconnectedSensors));
     }
 
+    public function checkDisconnections()
+    {
+        // Aquí simulas sensores desconectados
+        $disconnectedSensors = [
+            ['sensor_type' => 'gas', 'last_seen' => now()->subMinutes(5)->format('d/m/Y H:i:s')],
+            ['sensor_type' => 'luz', 'last_seen' => now()->subMinutes(10)->format('d/m/Y H:i:s')],
+        ];
+
+        // Devuelve los sensores desconectados como respuesta JSON
+        return response()->json([
+            'disconnected_sensors' => $disconnectedSensors,
+        ]);
+    }
+
+
 
 
     public function simulateDisconnection()

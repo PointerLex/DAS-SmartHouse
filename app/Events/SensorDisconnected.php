@@ -15,16 +15,16 @@ class SensorDisconnected implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $sensors;
+    public Collection $sensors;
 
-    public function __construct($sensors)
+    public function __construct(Collection $sensors)
     {
         $this->sensors = $sensors;
     }
 
     public function broadcastOn()
     {
-        return new Channel('sensor-readings');
+        return new Channel('sensor-readings'); // Cambia a PrivateChannel si es necesario
     }
 
     public function broadcastWith()
@@ -33,7 +33,7 @@ class SensorDisconnected implements ShouldBroadcast
             'disconnected_sensors' => $this->sensors->map(function ($sensor) {
                 return [
                     'sensor_type' => $sensor->sensor_type,
-                    'last_seen' => $sensor->last_seen->format('d/m/Y H:i:s'),
+                    'last_seen' => $sensor->last_seen ? $sensor->last_seen->format('d/m/Y H:i:s') : 'Desconocido',
                 ];
             }),
         ];

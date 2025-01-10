@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('sensor_type'); // gas o luz
             $table->float('value');        // lectura del sensor
             $table->string('status');     // Ambiente seguro, peligro, etc.
-            $table->timestamp('last_seen')->nullable()->after('created_at'); // Última vez que se recibió una lectura
+            $table->timestamp('last_seen')->nullable(); // Última vez que se recibió una lectura
             $table->timestamps();
         });
     }

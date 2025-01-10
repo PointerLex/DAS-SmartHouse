@@ -2,11 +2,12 @@ from flask import Flask, jsonify, request
 import requests
 import serial
 import time
+import json
 
 app = Flask(__name__)
 
 # Configurar el puerto serie del Arduino
-arduino_port = "COM3"
+arduino_port = "COM3"  # Cambiar si el puerto es diferente
 baud_rate = 9600
 try:
     arduino = serial.Serial(arduino_port, baud_rate, timeout=1)
@@ -17,10 +18,12 @@ except Exception as e:
 
 # Enviar datos al endpoint API de Laravel
 def send_to_api(sensor):
-    url = "http://127.0.0.1:8000/api/sensor-readings"
+    url = "http://127.0.0.1:8000/api/sensor-readings"  # Cambiar si es necesario
     try:
         response = requests.post(url, json=sensor)
         print(f"Enviado: {sensor}, Respuesta: {response.status_code}")
+        if response.status_code != 201:
+            print(f"Error en la respuesta del servidor: {response.text}")
     except Exception as e:
         print(f"Error al enviar los datos: {e}")
 
@@ -28,7 +31,7 @@ def send_to_api(sensor):
 def read_sensor_data_from_arduino():
     if arduino and arduino.in_waiting > 0:
         try:
-            line = arduino.readline().decode('utf-8').strip()  # Leer una línea y decodificar
+            line = arduino.readline().decode('utf-8').strip()  # Leer línea del Arduino
             if line:
                 print(f"Datos recibidos del Arduino: {line}")
                 sensor_data = parse_sensor_data(line)
@@ -40,15 +43,19 @@ def read_sensor_data_from_arduino():
 # Parsear los datos JSON recibidos desde el Arduino
 def parse_sensor_data(line):
     try:
-        data = line.split(';')  # Supongamos que los datos están separados por ";"
-        sensor_type, value, status = data
-        return {
-            "sensor_type": sensor_type,
-            "value": int(value),
-            "status": status
-        }
-    except Exception as e:
-        print(f"Error al parsear los datos: {e}")
+        # Intentar parsear como JSON
+        data = json.loads(line)
+        if "sensor_type" in data and "value" in data and "status" in data:
+            return {
+                "sensor_type": data["sensor_type"],
+                "value": int(data["value"]),
+                "status": data["status"]
+            }
+        else:
+            print(f"Datos JSON inválidos: {line}")
+            return None
+    except json.JSONDecodeError:
+        print(f"Error al decodificar JSON: {line}")
         return None
 
 # Ruta para probar el servidor
