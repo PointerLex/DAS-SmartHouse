@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AlertController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,4 +16,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('api')->group(function () {
     Route::post('/sensor-readings', [\App\Http\Controllers\ApiSensorReadingController::class, 'store']);
+    Route::post('/send-alert', [AlertController::class, 'sendAlert']);
+
 });

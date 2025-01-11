@@ -32,6 +32,21 @@ class ApiSensorReadingController extends Controller
         // Emitir el evento de actualización
         event(new \App\Events\SensorReadingUpdated($reading));
 
+        // Enviar correo si el estado es "Peligro" y el sensor es de tipo gas
+        if ($validated['sensor_type'] === 'gas' && $validated['status'] === 'Peligro') {
+            Mail::raw(
+                "¡Alerta de nivel peligroso detectado!\n\n"
+                . "Tipo de sensor: {$validated['sensor_type']}\n"
+                . "Nivel: {$validated['value']}\n"
+                . "Estado: {$validated['status']}\n\n"
+                . "Por favor, tome las medidas necesarias.",
+                function ($message) {
+                    $message->to(env('ADMIN_EMAIL'))
+                            ->subject('Smarthouse alert - ¡Alerta de gas peligroso!');
+                }
+            );
+        }
+
         // Respuesta de éxito
         return response()->json([
             'success' => true,
@@ -39,6 +54,7 @@ class ApiSensorReadingController extends Controller
             'data' => $reading,
         ], 201);
     }
+
 
 
     public function handleSensorDisconnection($disconnectedSensors)

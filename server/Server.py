@@ -7,7 +7,7 @@ import json
 app = Flask(__name__)
 
 # Configurar el puerto serie del Arduino
-arduino_port = "COM3"  # Cambiar si el puerto es diferente
+arduino_port = "COM7"  # Cambiar si el puerto es diferente
 baud_rate = 9600
 try:
     arduino = serial.Serial(arduino_port, baud_rate, timeout=1)
@@ -15,6 +15,9 @@ try:
 except Exception as e:
     print(f"No se pudo conectar al Arduino: {e}")
     arduino = None
+
+# Variables para evitar envíos redundantes
+last_sent_data = None
 
 # Enviar datos al endpoint API de Laravel
 def send_to_api(sensor):
@@ -58,6 +61,11 @@ def parse_sensor_data(line):
         print(f"Error al decodificar JSON: {line}")
         return None
 
+# Manejo de alertas
+def process_alert(sensor):
+    if sensor["sensor_type"] == "gas" and sensor["status"] == "Peligro":
+        send_to_api(sensor)
+
 # Ruta para probar el servidor
 @app.route('/test', methods=['GET'])
 def test_server():
@@ -66,9 +74,13 @@ def test_server():
 # Ruta para enviar datos a Laravel
 @app.route('/send-sensors', methods=['POST'])
 def send_sensors():
+    global last_sent_data
     sensor_data = read_sensor_data_from_arduino()
     if sensor_data:
-        send_to_api(sensor_data)
+        # Evitar enviar datos duplicados
+        if sensor_data != last_sent_data:
+            last_sent_data = sensor_data
+            send_to_api(sensor_data)
         return jsonify({"message": "Datos enviados exitosamente", "data": sensor_data}), 200
     else:
         return jsonify({"message": "No se recibieron datos del Arduino"}), 400
@@ -79,5 +91,5 @@ if __name__ == '__main__':
     while True:
         sensor_data = read_sensor_data_from_arduino()
         if sensor_data:
-            send_to_api(sensor_data)
+            process_alert(sensor_data)  # Procesar alertas solo para niveles peligrosos
         time.sleep(2)  # Tiempo entre envíos
